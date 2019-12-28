@@ -145,6 +145,10 @@ void draw(){
     pg.beginDraw();
     pg.clear();
     
+    fill(0,0,0);
+    stroke(0,0,0);
+    rect(0,0,width,height);
+    
     if(frameThrottle % 10 == 0){
       enemySquadron.update(0,width,0,height);
       player.update(0, width);
@@ -170,8 +174,8 @@ void drawEnemySquadron(){
    for(int i=0;i<s.Image.length; i++){
     for(int j=0; j<s.Image[i].length; j++){
       if(s.Image[i][j] == 0){
-        stroke(200,200,200);
-        fill(200,200,200);
+        stroke(0,0,0);
+        fill(0,0,0);
       }
       else{
         stroke(s.R,s.G,s.B);
@@ -194,8 +198,8 @@ void drawPlayer(){
    for(int i=0;i<s.Image.length; i++){
     for(int j=0; j<s.Image[i].length; j++){
       if(s.Image[i][j] == 0){
-        stroke(200,200,200);
-        fill(200,200,200);
+        stroke(0,0,0);
+        fill(0,0,0);
       }
       else{
         stroke(s.R,s.G,s.B);
