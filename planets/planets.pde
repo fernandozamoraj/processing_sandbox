@@ -1,6 +1,18 @@
+/*
+  Author: Fernando Zamora
+  Description: simulation of the planets orbiting the sun... did not include pluto
+  Notes: This is not an accurate simulation... I tried scaling things to be actual
+  but it proved nearly imposible because the distances between some planets are far too great
+  also the speed variances at which they travel around the sun is vast too great
+  so even those rations are not correct
+  The sizes are not correctly scaled either because most planets would probably dissappear off the screen.
+  About the only thing that is accurate is the the order of the planets from the sun
+  and their primary colors.
+  Other than that it is just a fun little program to create.
+*/
+class Planet{
 
-class Bubble{
- 
+  public String Name;
   public int X;
   public int Y;
   public int R;
@@ -9,42 +21,44 @@ class Bubble{
   public int Diameter;
   public int DX;
   public int DY;
+  public int Distance;
+  public int RevolutionSpeed;
+  public float Direction = 0;
   
-  public Bubble(){
+  public Planet(String name, int distance, int size, int r, int g, int b, int revolutionSpeed){
      X = 0;
      Y  = 0;
-     R = 200;
-     G = 0;
-     B = 0;
-     Diameter = (int)(random(5)+1)*20;
+     R = r;
+     G = g;
+     B = b;
+     Name = name;
+     Distance = distance;
+     Diameter = size;
+     RevolutionSpeed = revolutionSpeed;
   }
-  
 }
 
 PGraphics pg;
 int delta_bat_x = 0;
-Bubble[] bubbles;
+Planet[] planets;
+int cycleThrottle = 0;
 
 void setup(){
- size(800,800); 
+ size(1200,1200); 
  pg = createGraphics(width, height);
- bubbles = new Bubble[50];
+ planets = new Planet[9];
 
- for(int i=0; i < bubbles.length; i++){
-    bubbles[i] = new Bubble();
-    
-    bubbles[i].X = (int)random(width);
-    bubbles[i].Y = (int)random(height);
-    bubbles[i].R = (int)random(25)*10;
-    bubbles[i].G = (int)random(25)*10;
-    bubbles[i].B = (int)random(25)*10;
-    bubbles[i].Diameter = (int)random(5)*40;
-    
-    bubbles[i].DX = (int)random(6)-3;
-    bubbles[i].DY = (int)random(6)-3;
-    
-    
- }
+ planets[0] = new Planet("Sun", 0, 100, 200, 200, 0, 0);
+ planets[1] = new Planet("Mercury", 21, 3, 150,150,150, 40);
+ planets[2] = new Planet("Venus", 39, 7, 250,250, 200, 80);
+ planets[3] = new Planet("Earth", 54, 8, 50,50,200,60);
+ planets[4] = new Planet("Mars", 84, 4, 250,100,100, 32);
+ planets[5] = new Planet("Jupiter", 150, 43, 250,200,0,16);
+ planets[6] = new Planet("Saturn", 200, 36, 250,250,0,12);
+ planets[7] = new Planet("Uranus", 325, 31, 100,200,250,8);
+ planets[8] = new Planet("Neptune", 430, 30, 120,220, 240,5);
+ 
+ cycleThrottle = 0;
  
 }
 
@@ -55,28 +69,64 @@ void draw(){
     pg.beginDraw();
     pg.clear();
     
-    for(int i=0; i < bubbles.length; i++){
-      
-       bubbles[i].X += bubbles[i].DX;
-       bubbles[i].Y += bubbles[i].DY;
-       int d = bubbles[i].Diameter;
-       
-       if(bubbles[i].X < -d) bubbles[i].X = width;
-       else if(bubbles[i].X > width+1) bubbles[i].X = -d;
-       if(bubbles[i].Y < -d) bubbles[i].Y = height;
-       if(bubbles[i].Y > height) bubbles[i].Y = -d;
-       
-       fill(bubbles[i].R, bubbles[i].G, bubbles[i].B);
-       
-       stroke(bubbles[i].R, bubbles[i].G, bubbles[i].B);
-       ellipse(bubbles[i].X, bubbles[i].Y, bubbles[i].Diameter, bubbles[i].Diameter);
-       
-       fill(255,255,255);
-       stroke(255,255,255);
-       ellipse((float)bubbles[i].X-d/4, (float)bubbles[i].Y-d/4, d/8, d/8); 
-    }
-      
+    stroke(0,0,0);
+    fill(0,0,0);
+    rect(0,0,width,height);
+    
+    updatePlanets();
+    drawPlanets();
+
     pg.endDraw();
       
+  }
+  
+  cycleThrottle++;
+  if(cycleThrottle > 6000){
+    cycleThrottle = 0; 
+  }
+}
+
+void updatePlanets(){
+ 
+  if(cycleThrottle % 10 != 0)
+    return;
+    
+  int middleX = width/2;
+  int middleY = height/2;
+    
+  for(Planet p : planets){
+    if(p.Name.equals("Sun")){
+      p.X = middleX;
+      p.Y = middleY;
+      continue;
+    }
+    int distance = planets[0].Diameter/2+p.Distance;
+    p.Direction += (p.RevolutionSpeed*.2);
+    if(p.Direction > 360){
+       p.Direction -= 360;
+    }
+
+    p.X = middleX + (int)(cos(radians(p.Direction))*distance);
+    p.Y = middleY + (int)(sin(radians(p.Direction))*distance);
+    
+  }
+}
+
+void drawPlanets(){
+  
+   //int middleX = width/2;
+   //int middleY = height/2;
+  for(Planet p : planets){
+   
+    
+    fill(p.R, p.G, p.B);
+    stroke(p.R, p.G, p.B);
+    /*if(p.Name.equals("Sun"))
+       p.X = middleX; //sscale divide by 2 to fit screen
+    else
+      p.X = middleX + (planets[0].Diameter/2)+p.Distance; //sscale divide by 2 to fit screen
+    p.Y = middleY;*/
+    ellipse(p.X, p.Y, p.Diameter, p.Diameter);
+    
   }
 }
