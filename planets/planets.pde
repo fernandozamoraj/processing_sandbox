@@ -38,9 +38,16 @@ class Planet{
   }
 }
 
+class Star{
+ 
+  public int X;
+  public int Y;
+}
+
 PGraphics pg;
 int delta_bat_x = 0;
 Planet[] planets;
+Star[] stars;
 int cycleThrottle = 0;
 
 void setup(){
@@ -58,6 +65,15 @@ void setup(){
  planets[7] = new Planet("Uranus", 325, 31, 100,200,250,8);
  planets[8] = new Planet("Neptune", 430, 30, 120,220, 240,5);
  
+ stars = new Star[100];
+ 
+ for(int i=0 ;i < stars.length; i++){
+  
+   stars[i] = new Star();
+   stars[i].X = (int)random(1200);
+   stars[i].Y = (int)random(1200);
+ }
+ 
  cycleThrottle = 0;
  
 }
@@ -74,6 +90,7 @@ void draw(){
     rect(0,0,width,height);
     
     updatePlanets();
+    drawStars();
     drawPlanets();
 
     pg.endDraw();
@@ -129,4 +146,15 @@ void drawPlanets(){
     ellipse(p.X, p.Y, p.Diameter, p.Diameter);
     
   }
+}
+
+void drawStars(){
+ 
+  for(Star s: stars){
+   
+    stroke(255,255,255);
+    fill(255,255,255);
+    ellipse(s.X, s.Y, 1, 1);
+  }
+  
 }
