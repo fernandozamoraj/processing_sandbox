@@ -59,16 +59,21 @@ void draw(){
       
        bubbles[i].X += bubbles[i].DX;
        bubbles[i].Y += bubbles[i].DY;
+       int d = bubbles[i].Diameter;
        
-       if(bubbles[i].X < -50) bubbles[i].X = width;
-       else if(bubbles[i].X > width+50) bubbles[i].X = -49;
-       if(bubbles[i].Y < -50) bubbles[i].Y = height;
-       if(bubbles[i].Y > height+50) bubbles[i].Y = -49;
+       if(bubbles[i].X < -d) bubbles[i].X = width;
+       else if(bubbles[i].X > width+1) bubbles[i].X = -d;
+       if(bubbles[i].Y < -d) bubbles[i].Y = height;
+       if(bubbles[i].Y > height) bubbles[i].Y = -d;
        
        fill(bubbles[i].R, bubbles[i].G, bubbles[i].B);
        
        stroke(bubbles[i].R, bubbles[i].G, bubbles[i].B);
-       ellipse(bubbles[i].X, bubbles[i].Y, bubbles[i].Diameter, bubbles[i].Diameter); 
+       ellipse(bubbles[i].X, bubbles[i].Y, bubbles[i].Diameter, bubbles[i].Diameter);
+       
+       fill(255,255,255);
+       stroke(255,255,255);
+       ellipse((float)bubbles[i].X-d/4, (float)bubbles[i].Y-d/4, d/8, d/8); 
     }
       
     pg.endDraw();
