@@ -1,10 +1,12 @@
 class PlayerShip extends Sprite{
   
-    public PlayerShip() {
+  int health = 3;
+  
+  public PlayerShip() {
     
-      super("Player", 0,0,250,250,250, 0, 0);
+    super("Player", 0,0,250,250,250, 0, 0);
     
-     int[][][] image = new int[][][]{
+    int[][][] image = new int[][][]{
        {
        {0,0,0,1,0,0,0},
        {0,0,0,1,0,0,0},
@@ -30,5 +32,48 @@ class PlayerShip extends Sprite{
        if(X*scale + DX*scale + 7*scale < maxX)
          X += DX; 
     }
+  }
+  
+  public void takeHit(){
+    
+     health--;
+    
+     if(health == 2){
+       int[][][] image = new int[][][]{
+         {
+         {0,0,0,1,0,0,0},
+         {0,0,0,1,0,0,0},
+         {0,0,1,1,1,0,0},
+         {0,1,0,1,1,1,0},
+         {1,1,0,1,1,1,1},
+         {0,0,0,1,1,0,0},
+         {0,0,0,1,0,0,0}
+         }
+        };
+        setImage(image);
+     }
+     
+     if(health == 1){
+        int[][][] image = new int[][][]{
+         {
+         {0,0,0,1,0,0,0},
+         {0,0,0,1,0,0,0},
+         {0,0,0,1,1,0,0},
+         {0,0,0,0,1,0,0},
+         {1,0,0,0,1,1,1},
+         {0,0,0,0,1,0,0},
+         {0,0,0,1,0,0,0}
+         }
+        };
+        setImage(image);
+     }
+  }
+  
+  public boolean isAlive(){
+    return health > 0; 
+  }
+  
+  public int top(){
+    return X - Image[0].length;
   }
 }

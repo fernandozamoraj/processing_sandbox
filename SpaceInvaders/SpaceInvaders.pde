@@ -1,11 +1,10 @@
-
-
-
-
 PGraphics pg;
 EnemySquadron enemySquadron;
 PlayerShip player;
 PlayerBullet[] playerBullets;
+EnemyBullet[] enemyBullets;
+int[][] startGameMessage;
+AlienFonts alienFonts;
 
 int frameThrottle = 0;
 int scale = 3;
@@ -26,8 +25,17 @@ void setup(){
  enemySquadron = new EnemySquadron(); 
  player = new PlayerShip();
  playerBullets = new PlayerBullet[50];
+ enemyBullets = new EnemyBullet[10];
+ 
  for(int i=0;i<playerBullets.length; i++)
    playerBullets[i] = new PlayerBullet();
+   
+ for(int i=0;i<enemyBullets.length; i++)
+   enemyBullets[i] = new EnemyBullet();
+   
+ alienFonts = new AlienFonts();
+ startGameMessage = alienFonts.getSprite("0123456789");
+   
  frameThrottle = 0;
  scoreBoard = new ScoreBoard();
  scoreBoard.X = -1;
@@ -80,6 +88,12 @@ void keyPressed(){
 void keyReleased(){
   currentKey = ' '; 
 }
+
+/***********************************************
+
+   Screens
+
+************************************************/
 void playGame(){
   
     background(204);
@@ -105,6 +119,10 @@ void playGame(){
       
       player.update(shipDirection, scale, width);
       checkUserInput();
+      
+      if(frameThrottle %  40 == 0 || frameThrottle %  60 == 0){
+        shootEnemyBullet();        
+      }
     }
     
     if(frameThrottle % 5 == 0){
@@ -112,10 +130,12 @@ void playGame(){
     }
     
     detectAlienHits();
+    detectPlayerHits();
     
     drawEnemySquadron();
     drawPlayer();
     drawBullets();
+    drawEnemyBullets();
     drawScoreBoard();
     pg.endDraw();
       
@@ -123,6 +143,7 @@ void playGame(){
   
   frameThrottle++;
 }
+
 
 void screenSaver(){
   
@@ -145,7 +166,9 @@ void screenSaver(){
     drawPlayer();
     drawBullets();
     drawScoreBoard();
-    drawStartScreenText(20, height/2-100);
+
+    fill(255,255,255);
+    drawSprite((width/2)/scale, ((height/2)/scale), startGameMessage, 2); //<>//
     pg.endDraw();
       
   }
@@ -180,6 +203,14 @@ void gameOver(){
     gameMode = 0; 
   }
 }
+//*************End of screens
+
+/***********************************************************
+
+    Actions... shoot bullets launch bullets etc
+
+
+***********************************************************/
 
 void checkUserInput(){
 
@@ -196,45 +227,6 @@ void checkUserInput(){
       launchBullet = false;
     }
   }
-}
-
-
-
-void updateBullets(){
-
-  for(PlayerBullet pb : playerBullets){
-     pb.update(); 
-  }
-}
-
-void drawScoreBoard(){
-  textFont(font);
-  //textSize(20);
-  fill(100,100,200);
-  int offset = 0;
-  for(String line : scoreBoard.getLines()){
-    text(line, scoreBoard.X + offset, scoreBoard.Y);
-    offset += 400;
-  }
-}
-
-void drawStartScreenText(int x, int y){
-  textFont(font);
-  
-
-  fill(100,100,200);
-
-  text("Press s to start", x, y);
-  text("use j and k to move left and right", x, y+30);
-  text("use f to fire", x, y+60);
-
-}
-
-void drawGameOverText(int x, int y){
-   textFont(font);
-
-  fill(100,100,200);
-  text("Game Over!", x, y);
 }
 
 void detectAlienHits(){
@@ -256,11 +248,82 @@ void detectAlienHits(){
   }
 }
 
+void detectPlayerHits(){
+
+  for(EnemyBullet eb : enemyBullets){
+    if(!eb.isAlive(width) || !player.isAlive())
+      continue;
+
+      
+    if(eb.hitAlien(player.X, player.Y, player.Image[0][0].length, player.Image[0].length)){
+       eb.killBullet();
+       player.takeHit();
+       scoreBoard.Lives--;
+    }
+  }
+}
+
+void shootEnemyBullet(){
+ 
+  int randomEnemy = (int)random(enemySquadron.liveEnemiesCount());
+  EnemyShip[] enemies = enemySquadron.getSprites();
+  int count = -1;
+  boolean shotFired = false;
+  for(int i=0; i < enemies.length; i++){
+   
+    if(enemies[i].isAlive()){
+        count++;
+        if(randomEnemy == count){
+           for(EnemyBullet bullet : enemyBullets){
+               if(!bullet.isAlive(800)){
+                 bullet.launch(enemies[i].X, enemies[i].Y); 
+                 shotFired = false;
+                 break;
+               }
+           }
+        }
+    }
+    
+    if(shotFired)
+      break;
+  }
+}
+
+
+void updateBullets(){
+
+  for(PlayerBullet pb : playerBullets){
+     pb.update(); 
+  }
+  
+  for(EnemyBullet eb : enemyBullets){
+     eb.update(); 
+  }
+}
+
+//**************** End of actions
+
+/***********************************************************
+
+    Drawing Functions
+
+
+***********************************************************/
+
 void drawBullets(){
   Sprite first = playerBullets[0];
   fill(first.R, first.G, first.B);
   stroke(first.R, first.G, first.B);
   for(Sprite s: playerBullets){
+    drawSprite(s.X, s.Y, s.Image[0]);
+  }
+}
+
+void drawEnemyBullets(){
+  Sprite first = enemyBullets[0];
+  fill(first.R, first.G, first.B);
+  stroke(first.R, first.G, first.B);
+  for(Sprite s: enemyBullets){
     drawSprite(s.X, s.Y, s.Image[0]);
   }
 }
@@ -287,6 +350,21 @@ void drawEnemySquadron(){
   }
 }
 
+void drawGameOverText(int x, int y){
+   textFont(font);
+
+  fill(100,100,200);
+  text("Game Over!", x, y);
+}
+
+void drawPlayer(){
+  if(player.isAlive()){
+    fill(player.R, player.G, player.B);
+    stroke(player.R, player.G, player.B);
+    drawSprite(player.X, player.Y, player.Image[0]);
+  }
+}
+
 void drawSprite(int x, int y, int[][] image){
   for(int i=0;i<image.length; i++){
     for(int j=0; j<image[i].length; j++){
@@ -299,8 +377,37 @@ void drawSprite(int x, int y, int[][] image){
   }
 }
 
-void drawPlayer(){
-  fill(player.R, player.G, player.B);
-  stroke(player.R, player.G, player.B);
-  drawSprite(player.X, player.Y, player.Image[0]);
+void drawScoreBoard(){
+
+  noStroke();
+  fill(100,100,200);
+  int offset = 0;
+  int x = 20;
+  int y = (height/2)/scale;
+  for(String line : scoreBoard.getLines()){
+    int[][] message = alienFonts.getSprite(line);
+    drawSprite(x, y, message, 4);
+    y += 30;
+  }
+}
+
+void drawSprite(int x, int y, int[][] image, int scale){
+  for(int i=0;i<image.length; i++){
+    for(int j=0; j<image[i].length; j++){
+      if(image[i][j] == 1){
+        int newX = x*scale+j*scale+3*scale;
+        int newY = y*scale+i*scale+3*scale;
+        rect(newX, newY, scale,scale);
+      }
+    }
+  }
+}
+
+void drawStartScreenText(int x, int y){
+  textFont(font);
+  fill(100,100,200);
+
+  text("Press s to start", x, y);
+  text("use j and k to move left and right", x, y+30);
+  text("use f to fire", x, y+60);
 }

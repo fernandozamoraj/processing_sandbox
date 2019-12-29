@@ -37,6 +37,17 @@ class EnemySquadron{
     }
   }
   
+  public int liveEnemiesCount(){
+    int count = 0;
+    for(EnemyShip sp: sprites){
+      if(sp.isAlive())
+      {
+        count++;
+      }
+    }
+    return count;
+  }
+  
   public void bounceBack(){
     for(EnemyShip sp: sprites){
       
