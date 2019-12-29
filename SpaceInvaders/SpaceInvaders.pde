@@ -8,7 +8,7 @@ PlayerShip player;
 PlayerBullet[] playerBullets;
 
 int frameThrottle = 0;
-int scale = 5;
+int scale = 3;
 char currentKey = ' ';
 int shipDirection = 0;
 boolean launchBullet = false;
