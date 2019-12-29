@@ -1,7 +1,10 @@
-class Enemy extends Sprite{
+class EnemyShip extends Sprite{
   
   int health;
-  public Enemy() {
+  public int currentImage;
+  public EnemySquadron parent;
+  
+  public EnemyShip() {
     
     super("Alien", 0,0,100,250,100, 1, 0);
     
@@ -30,18 +33,29 @@ class Enemy extends Sprite{
       
     };
      setImage(image); 
+     DX = 6;
   }
   
   public void update(int scale, int maxX){
+    
+    if(currentImage == 0){
+     currentImage = 1; 
+    }
+    else{
+     currentImage = 0; 
+    }
     X += DX;
+  }
+  
+  public boolean hitsWall(int scale, int maxX){
     if(X*scale+20*scale > maxX){
-       DX *= -1; 
-       Y += Image[0][0].length;
+       return true;
     }
     else if(X < 0){
-      DX *= -1;
-      Y += Image[0][0].length;
+      return true;
     }
+
+    return false;
   }
   
   public void takeHit(){

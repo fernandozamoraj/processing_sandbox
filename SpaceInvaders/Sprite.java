@@ -23,4 +23,11 @@ class Sprite{
   public void setImage(int[][][] image){
     Image = image;
   }
+  
+  public int left(){
+    return X - Image[0][0].length;
+  }
+  public int top(){
+    return Y - Image[0].length; 
+  }
 }

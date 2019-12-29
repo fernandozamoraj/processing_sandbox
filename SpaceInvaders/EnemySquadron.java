@@ -1,30 +1,48 @@
 class EnemySquadron{
  
-  Enemy[] sprites;
+  EnemyShip[] sprites;
   
   public EnemySquadron(){
      
-    sprites = new Enemy[18];
+    sprites = new EnemyShip[45];
     int xOffsetSpace = 3;
     int k = 0;
-    for(int i=0; i< 3; i++){
-       for(int j=0; j<6;j++){
-         sprites[k] = new Enemy();
+    for(int i=0; i< 5; i++){
+       for(int j=0; j<9;j++){
+         sprites[k] = new EnemyShip();
          int w = sprites[k].Image[0].length;
          sprites[k].X = j*w+10*j;
          sprites[k].Y = i*w+10*i;
+         sprites[k].parent = this;
          k++;
        }
     }
   }
-  public Enemy[] getSprites(){
+  public EnemyShip[] getSprites(){
     return sprites;    
   }
   
   public void update(int scale, int maxX, int lowerY, int maxY){
    
-    for(Enemy sp: sprites){
+    for(EnemyShip sp: sprites){
+      if(sp.hitsWall(scale, maxX))
+      {
+        bounceBack();
+        break;
+      }
+    }
+    
+    for(EnemyShip sp: sprites){
       sp.update(scale, maxX);
+    }
+  }
+  
+  public void bounceBack(){
+    for(EnemyShip sp: sprites){
+      
+      sp.DX *= -1;
+      sp.Y += sp.Image[0][0].length;
+      sp.X += sp.DX;
     }
   }
 }

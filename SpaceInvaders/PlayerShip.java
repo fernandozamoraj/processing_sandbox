@@ -16,7 +16,7 @@ class PlayerShip extends Sprite{
        }
       };
      setImage(image); 
-     X = 50;
+     X = 90;
      Y = 100;
      DX = 5;
   }

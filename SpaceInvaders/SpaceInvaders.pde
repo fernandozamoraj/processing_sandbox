@@ -15,6 +15,9 @@ boolean launchBullet = false;
 ScoreBoard scoreBoard;
 PFont font;
 
+int gameMode = 0;
+int gameOverTimer = 0;
+int squadronSpeed = 40;
 
 void setup(){
  size(800,600); 
@@ -34,7 +37,52 @@ void setup(){
 }
 
 void draw(){
-  background(204);
+
+  switch(gameMode){
+    
+    case 0: screenSaver(); break;
+    case 1: playGame(); break;
+    case 2: 
+    
+      gameOverTimer = 200;
+      gameOver();
+      break;
+    
+  }
+}
+
+void keyPressed(){
+  
+  if(gameMode == 0){
+    if(key == 's'){
+      gameMode = 1; 
+      player.X = 120;
+      player.Y = 170;
+    }
+  }
+  else if(gameMode == 1){
+    currentKey = key; 
+    if(key == 'j'){
+      shipDirection = 1; 
+    }
+    if(key == 'k'){
+      shipDirection = 2; 
+    }
+    if(key == 'f'){
+      launchBullet = true; 
+    }
+  }
+  else if(gameMode ==2){
+    
+  }
+}
+
+void keyReleased(){
+  currentKey = ' '; 
+}
+void playGame(){
+  
+    background(204);
   
   if(scoreBoard.X == -1){
     scoreBoard.X = 40;
@@ -50,16 +98,17 @@ void draw(){
     rect(0,0,width,height);
     
     if(frameThrottle % 10 == 0){
-      enemySquadron.update(scale,width,0,height);
+      
+      if(frameThrottle % squadronSpeed == 0){
+        enemySquadron.update(scale,width,0,height);
+      }
+      
       player.update(shipDirection, scale, width);
       checkUserInput();
-      
-      
     }
     
     if(frameThrottle % 5 == 0){
       updateBullets(); 
-      
     }
     
     detectAlienHits();
@@ -75,6 +124,63 @@ void draw(){
   frameThrottle++;
 }
 
+void screenSaver(){
+  
+  background(204);
+  
+  if(scoreBoard.X == -1){
+    scoreBoard.X = 40;
+    scoreBoard.Y = height - 20;
+  }
+  if(pg != null){
+    
+    pg.beginDraw();
+    pg.clear();
+    
+    fill(0,0,0);
+    stroke(0,0,0);
+    rect(0,0,width,height);
+    
+    drawEnemySquadron();
+    drawPlayer();
+    drawBullets();
+    drawScoreBoard();
+    drawStartScreenText(20, height/2-100);
+    pg.endDraw();
+      
+  }
+  
+  frameThrottle++;
+}
+
+
+void gameOver(){
+  
+  
+  background(204);
+  
+  if(pg != null){
+    
+    pg.beginDraw();
+    pg.clear();
+    
+    fill(0,0,0);
+    stroke(0,0,0);
+    rect(0,0,width,height);
+    
+    drawGameOverText((width-200)/2, height/2);
+    pg.endDraw();
+    
+  }
+  
+  frameThrottle++;
+  
+  gameOverTimer--;
+  if(gameOverTimer < 0){
+    gameMode = 0; 
+  }
+}
+
 void checkUserInput(){
 
   if(frameThrottle % 30 == 0){
@@ -83,7 +189,7 @@ void checkUserInput(){
       for(PlayerBullet bullet : playerBullets){
         
         if(!bullet.isAlive()){
-          bullet.launch(player.X, player.Y);
+          bullet.launch(player.X+player.Image[0][0].length/2, player.Y+player.Image[0].length/2);
           break;
         }
       }
@@ -92,22 +198,7 @@ void checkUserInput(){
   }
 }
 
-void keyPressed(){
-  currentKey = key; 
-  if(key == 'j'){
-    shipDirection = 1; 
-  }
-  if(key == 'k'){
-    shipDirection = 2; 
-  }
-  if(key == 'f'){
-    launchBullet = true; 
-  }
-}
 
-void keyReleased(){
-  currentKey = ' '; 
-}
 
 void updateBullets(){
 
@@ -127,17 +218,36 @@ void drawScoreBoard(){
   }
 }
 
-void detectAlienHits(){
-    Enemy[] enemies = enemySquadron.getSprites();
+void drawStartScreenText(int x, int y){
+  textFont(font);
+  
 
-  for(Enemy s: enemies){
+  fill(100,100,200);
+
+  text("Press s to start", x, y);
+  text("use j and k to move left and right", x, y+30);
+  text("use f to fire", x, y+60);
+
+}
+
+void drawGameOverText(int x, int y){
+   textFont(font);
+
+  fill(100,100,200);
+  text("Game Over!", x, y);
+}
+
+void detectAlienHits(){
+    EnemyShip[] enemies = enemySquadron.getSprites();
+
+  for(EnemyShip s: enemies){
     for(PlayerBullet pb : playerBullets){
       if(!pb.isAlive() || !s.isAlive())
         continue;
         
        //System.out.println("Made it here");
         
-      if(pb.hitAlien(s.X, s.Y, s.Image[0].length, s.Image.length)){
+      if(pb.hitAlien(s.X, s.top(), s.Image[0][0].length, s.Image[0].length)){
          pb.killBullet();
          s.takeHit();
          scoreBoard.Score += 100;
@@ -165,15 +275,15 @@ void drawEnemySquadron(){
       currentEnemy = 1;
   }
     
-  Enemy[] enemies = enemySquadron.getSprites();
+  EnemyShip[] enemies = enemySquadron.getSprites();
 
-  Enemy first = enemies[0];
+  EnemyShip first = enemies[0];
   fill(first.R, first.G, first.B);
   stroke(first.R, first.G, first.B);
-  for(Enemy s: enemies){
+  for(EnemyShip s: enemies){
     if(!s.isAlive())
       continue;
-      drawSprite(s.X, s.Y, s.Image[currentEnemy]);
+      drawSprite(s.X, s.Y, s.Image[s.currentImage]);
   }
 }
 
