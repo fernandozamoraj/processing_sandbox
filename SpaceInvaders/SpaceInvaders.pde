@@ -3,6 +3,7 @@ EnemySquadron enemySquadron;
 PlayerShip player;
 PlayerBullet[] playerBullets;
 EnemyBullet[] enemyBullets;
+Missile[] missiles;
 int[][] startGameMessage;
 AlienFonts alienFonts;
 
@@ -26,6 +27,7 @@ void setup(){
  player = new PlayerShip();
  playerBullets = new PlayerBullet[50];
  enemyBullets = new EnemyBullet[10];
+ missiles = new Missile[5];
  
  for(int i=0;i<playerBullets.length; i++)
    playerBullets[i] = new PlayerBullet();
@@ -166,9 +168,9 @@ void screenSaver(){
     drawPlayer();
     drawBullets();
     drawScoreBoard();
-
+ //<>//
     fill(255,255,255);
-    drawSprite((width/2)/scale, ((height/2)/scale), startGameMessage, 2); //<>//
+    drawSprite((width/2)/scale, ((height/2)/scale), startGameMessage, 2);
     pg.endDraw();
       
   }
@@ -328,15 +330,7 @@ void drawEnemyBullets(){
   }
 }
 
-int currentEnemy = 1;
 void drawEnemySquadron(){
-  
-  if(frameThrottle % 40 == 0){
-    if(currentEnemy == 1)
-      currentEnemy = 0;
-    else
-      currentEnemy = 1;
-  }
     
   EnemyShip[] enemies = enemySquadron.getSprites();
 

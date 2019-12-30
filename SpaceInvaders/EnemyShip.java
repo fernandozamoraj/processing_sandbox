@@ -6,7 +6,7 @@ class EnemyShip extends Sprite{
   
   public EnemyShip() {
     
-    super("Alien", 0,0,100,250,100, 1, 0);
+    super("Alien", 0,0,250,100, 250, 1, 0);
     
     health = 3;  
      int[][][] image = new int[][][]{
