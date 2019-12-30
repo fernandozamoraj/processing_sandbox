@@ -12,8 +12,8 @@ class ScoreBoard{
  public String[] getLines(){
      String[] lines = new String[2];
      
-     lines[0] = "SCORE: " + Score;
-     lines[1] = "LIVES: " + Lives;
+     lines[0] = "score: " + Score;
+     lines[1] = "lives: " + Lives;
     
      return lines;
  }

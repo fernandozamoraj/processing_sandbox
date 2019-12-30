@@ -387,7 +387,7 @@ void drawScoreBoard(){
   for(String line : scoreBoard.getLines()){
     int[][] message = alienFonts.getSprite(line);
     drawSprite(x, y, message, 4);
-    y += 30;
+    y += 10;
   }
 }
 
@@ -395,8 +395,8 @@ void drawSprite(int x, int y, int[][] image, int scale){
   for(int i=0;i<image.length; i++){
     for(int j=0; j<image[i].length; j++){
       if(image[i][j] == 1){
-        int newX = x*scale+j*scale+3*scale;
-        int newY = y*scale+i*scale+3*scale;
+        int newX = x*scale+j*scale;
+        int newY = y*scale+i*scale;
         rect(newX, newY, scale,scale);
       }
     }

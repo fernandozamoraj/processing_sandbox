@@ -7,14 +7,13 @@ class AlienFonts{
   public int[][] getSprite(String message){
    
     int[][] map = new int[5][];
-    
+    System.out.println("printing message " + message);
     for(int i=0; i < map.length; i++){
-      map[i] = new int[message.length() * 5]; 
+      map[i] = new int[message.length() * 10]; 
     }
 
     for(int i=0; i< message.length(); i++){
-      appendToMap(map, i*5, message.charAt(i)); 
-      i++;
+      appendToMap(map, i*5, message.charAt(i));  //<>//
     }
     
     return map;
@@ -25,7 +24,7 @@ class AlienFonts{
     int[][] spriteChar = getChar(ch);
     for(int i=0;i < 5; i++){
        for(int j=0; j < 5; j++){
-         sprite[i][startingPoint+j] = spriteChar[i][j]; 
+         sprite[i][startingPoint+j] = spriteChar[i][j];  //<>//
        }
     }
   }
@@ -238,29 +237,141 @@ class AlienFonts{
          {1,0,0,1,0},
          {1,0,0,1,0}
        }; break; 
-         case 'o': 
+      case 'o': 
        result = new int[][]{
          {0,1,1,0,0},
-         {1,0,0,0,0},
-         {1,1,1,1,0},
+         {1,0,0,1,0},
+         {1,0,0,1,0},
          {1,0,0,1,0},
          {0,1,1,0,0}
        }; break; 
-           case 'p': 
+      case 'p': 
+       result = new int[][]{
+         {1,1,1,0,0},
+         {1,0,0,1,0},
+         {1,1,1,0,0},
+         {1,0,0,0,0},
+         {1,0,0,0,0}
+       }; break; 
+      case 'q': 
        result = new int[][]{
          {0,1,1,0,0},
+         {1,0,0,1,0},
+         {1,0,0,1,0},
+         {1,0,1,1,0},
+         {0,1,1,1,0}
+       }; break; 
+     case 'r': 
+       result = new int[][]{
+         {1,1,1,0,0},
+         {1,0,0,1,0},
+         {1,1,1,0,0},
+         {1,0,1,0,0},
+         {1,0,0,1,0}
+       }; break; 
+     case 's': 
+       result = new int[][]{
+         {0,1,1,1,0},
          {1,0,0,0,0},
+         {0,1,1,0,0},
+         {0,0,0,1,0},
+         {1,1,1,0,0}
+       }; break; 
+     case 't': 
+       result = new int[][]{
          {1,1,1,1,0},
+         {0,1,0,0,0},
+         {0,1,0,0,0},
+         {0,1,0,0,0},
+         {0,1,0,0,0}
+       }; break; 
+     case 'u': 
+       result = new int[][]{
+         {1,0,0,1,0},
+         {1,0,0,1,0},
+         {1,0,0,1,0},
          {1,0,0,1,0},
          {0,1,1,0,0}
        }; break; 
+    case 'v': 
+       result = new int[][]{
+         {1,0,0,0,1},
+         {1,0,0,1,0},
+         {1,0,1,0,0},
+         {1,1,0,0,0},
+         {1,0,0,0,0}
+       }; break; 
+   case 'w': 
+       result = new int[][]{
+         {1,0,0,0,1},
+         {1,0,0,0,1},
+         {1,0,1,0,1},
+         {0,1,0,1,0},
+         {0,1,0,1,0}
+       }; break; 
+   case 'x': 
+       result = new int[][]{
+         {1,0,0,0,1},
+         {0,1,0,1,0},
+         {0,0,1,0,0},
+         {0,1,0,1,0},
+         {1,0,0,0,1}
+       }; break; 
+   case 'y': 
+       result = new int[][]{
+         {1,0,0,0,1},
+         {0,1,0,1,0},
+         {0,0,1,0,0},
+         {0,0,1,0,0},
+         {0,0,1,0,0}
+       }; break; 
+  case 'z': 
+       result = new int[][]{
+         {1,1,1,1,0},
+         {0,0,1,0,0},
+         {0,0,1,0,0},
+         {0,1,0,0,0},
+         {1,1,1,1,0}
+       }; break;  
+  case '?': 
+       result = new int[][]{
+         {0,1,1,0,0},
+         {1,0,0,1,0},
+         {0,0,1,0,0},
+         {0,0,0,0,0},
+         {0,0,1,0,0}
+       }; break;
+  case ':': 
+       result = new int[][]{
+         {0,0,0,0,0},
+         {0,0,1,0,0},
+         {0,0,0,0,0},
+         {0,0,1,0,0},
+         {0,0,0,0,0}
+       }; break;
+ case '!': 
+       result = new int[][]{
+         {0,0,1,0,0},
+         {0,0,1,0,0},
+         {0,0,1,0,0},
+         {0,0,0,0,0},
+         {0,0,1,0,0}
+       }; break;
+  case '.': 
+       result = new int[][]{
+         {0,0,0,0,0},
+         {0,0,0,0,0},
+         {0,0,0,0,0},
+         {0,0,0,0,0},
+         {0,0,1,0,0}
+       }; break;
      default: 
        result = new int[][]{
          {0,0,0,0,0},
          {0,0,0,0,0},
          {0,0,0,0,0},
          {0,0,0,0,0},
-         {1,1,1,1,0}
+         {0,0,0,0,0}
        };     
     }
     
