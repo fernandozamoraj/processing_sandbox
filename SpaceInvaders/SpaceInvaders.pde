@@ -4,7 +4,13 @@ PlayerShip player;
 PlayerBullet[] playerBullets;
 EnemyBullet[] enemyBullets;
 Missile[] missiles;
-int[][] startGameMessage;
+int[][] startGameMessage1;
+int[][] startGameMessage2;
+int[][] startGameMessage3;
+int[][] startGameMessage4;
+
+
+int[][] gameOverMessage;
 AlienFonts alienFonts;
 
 int frameThrottle = 0;
@@ -36,7 +42,12 @@ void setup(){
    enemyBullets[i] = new EnemyBullet();
    
  alienFonts = new AlienFonts();
- startGameMessage = alienFonts.getSprite("0123456789");
+ startGameMessage1 = alienFonts.getSprite("j = left");
+ startGameMessage2 = alienFonts.getSprite("k = right");
+ startGameMessage3 = alienFonts.getSprite("f = fire");
+ startGameMessage4 = alienFonts.getSprite("s = start game");
+ 
+ gameOverMessage = alienFonts.getSprite("earth has been invaded... game over!!!!");
    
  frameThrottle = 0;
  scoreBoard = new ScoreBoard();
@@ -55,21 +66,24 @@ void draw(){
     case 2: 
       gameOver();
       break;
-    
   }
 }
 
+void resetGame(){
+  squadronSpeed = 40;
+  enemySquadron = new EnemySquadron(); 
+  scoreBoard.Lives = 3;
+  scoreBoard.Score =0;
+  player.reset();
+  gameMode = 1; 
+  player.X = 120;
+  player.Y = 170;
+}
 void keyPressed(){
   
   if(gameMode == 0){
     if(key == 's'){
-      enemySquadron = new EnemySquadron(); 
-      scoreBoard.Lives = 3;
-      scoreBoard.Score =0;
-      player.reset();
-      gameMode = 1; 
-      player.X = 120;
-      player.Y = 170;
+      resetGame();
     }
   }
   else if(gameMode == 1){
@@ -118,10 +132,10 @@ void playGame(){
     if(frameThrottle % squadronSpeed == 0){
       enemySquadron.update(scale,width,0,height);
 
-      if(enemySquadron.DownSteps == 7){
+      if(enemySquadron.DownSteps == 9){
         squadronSpeed = 2;
       }
-      else if(enemySquadron.DownSteps == 6){
+      else if(enemySquadron.DownSteps == 7){
         squadronSpeed = 5;
       }
       else if(enemySquadron.DownSteps == 4){
@@ -154,10 +168,7 @@ void playGame(){
     detectPlayerHits();
     detectAlienPlayerCollision();
     
-    if(scoreBoard.Lives == 0){
-      gameOverTimer = 80;
-      gameMode = 2; 
-    }
+
     
     drawEnemySquadron();
     drawPlayer();
@@ -168,6 +179,11 @@ void playGame(){
       
   }
   
+  if(scoreBoard.Lives == 0){
+      gameOverTimer = 200;
+      gameMode = 2;
+  }
+    
   frameThrottle++;
 }
 
@@ -195,7 +211,14 @@ void screenSaver(){
     drawScoreBoard();
 
     fill(255,255,255);
-    drawSprite((width/2)/scale, ((height/2)/scale), startGameMessage, 2);
+    int x = (width/5)/scale;
+    int y = (height/2)/scale;
+    
+    drawSprite(x, y+20, startGameMessage1, 2);
+    drawSprite(x, y+40, startGameMessage2, 2);
+    drawSprite(x, y+60, startGameMessage3, 2);
+    drawSprite(x, y+80, startGameMessage4, 2);
+    
     pg.endDraw();
       
   }
@@ -218,7 +241,12 @@ void gameOver(){
     stroke(0,0,0);
     rect(0,0,width,height);
     
-    drawGameOverText((width-200)/2, height/2);
+    noStroke();
+    fill(0,255,0);
+    int x = 5;
+    int y = (height/2)/scale;
+    
+    drawSprite(x, y, gameOverMessage, 4);
     pg.endDraw();
     
   }
@@ -227,7 +255,6 @@ void gameOver(){
   
   gameOverTimer--;
   
-  text(""+gameOverTimer, 200,200);
   if(gameOverTimer < 0){
     gameMode = 0; 
     

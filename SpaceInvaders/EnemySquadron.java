@@ -5,11 +5,11 @@ class EnemySquadron{
   
   public EnemySquadron(){
      
-    sprites = new EnemyShip[45];
+    sprites = new EnemyShip[32];
     int xOffsetSpace = 3;
     int k = 0;
-    for(int i=0; i< 5; i++){
-       for(int j=0; j<9;j++){
+    for(int i=0; i< 4; i++){
+       for(int j=0; j<8;j++){
          sprites[k] = new EnemyShip();
          int w = sprites[k].Image[0].length;
          sprites[k].X = j*w+10*j;
