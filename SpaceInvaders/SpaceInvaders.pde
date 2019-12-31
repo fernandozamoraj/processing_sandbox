@@ -399,11 +399,11 @@ void drawScoreBoard(){
   fill(100,100,200);
   int offset = 0;
   int x = 20;
-  int y = (height/2)/scale;
+  int y = (height-50)/4;
   for(String line : scoreBoard.getLines()){
     int[][] message = alienFonts.getSprite(line);
     drawSprite(x, y, message, 4);
-    y += 10;
+    x += 80;
   }
 }
 
