@@ -1,6 +1,7 @@
 class EnemySquadron{
  
   EnemyShip[] sprites;
+  public int DownSteps = 0;
   
   public EnemySquadron(){
      
@@ -28,6 +29,7 @@ class EnemySquadron{
       if(sp.hitsWall(scale, maxX))
       {
         bounceBack();
+        DownSteps++;
         break;
       }
     }

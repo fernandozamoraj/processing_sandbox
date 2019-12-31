@@ -53,8 +53,6 @@ void draw(){
     case 0: screenSaver(); break;
     case 1: playGame(); break;
     case 2: 
-    
-      gameOverTimer = 200;
       gameOver();
       break;
     
@@ -65,6 +63,9 @@ void keyPressed(){
   
   if(gameMode == 0){
     if(key == 's'){
+      scoreBoard.Lives = 3;
+      scoreBoard.Score =0;
+      player.reset();
       gameMode = 1; 
       player.X = 120;
       player.Y = 170;
@@ -112,20 +113,33 @@ void playGame(){
     fill(0,0,0);
     stroke(0,0,0);
     rect(0,0,width,height);
-    
-    if(frameThrottle % 10 == 0){
+
+    if(frameThrottle % squadronSpeed == 0){
+      enemySquadron.update(scale,width,0,height);
       
-      if(frameThrottle % squadronSpeed == 0){
-        enemySquadron.update(scale,width,0,height);
+      if(enemySquadron.DownSteps >= 2){
+        squadronSpeed = 20;
       }
-      
-      player.update(shipDirection, scale, width);
-      checkUserInput();
-      
-      if(frameThrottle %  40 == 0 || frameThrottle %  60 == 0){
-        shootEnemyBullet();        
+      else if(enemySquadron.DownSteps >= 4){
+        squadronSpeed = 10;
+      }
+      else if(enemySquadron.DownSteps >= 6){
+        squadronSpeed = 5;
+      }
+      else if(enemySquadron.DownSteps >= 7){
+        squadronSpeed = 2;
       }
     }
+    
+    if(frameThrottle % 10 == 0){
+      player.update(shipDirection, scale, width);
+      checkUserInput();
+    }
+    
+    if(frameThrottle %  40 == 0 || frameThrottle %  60 == 0){
+      shootEnemyBullet();        
+    }
+  
     
     if(frameThrottle % 5 == 0){
       updateBullets(); 
@@ -133,6 +147,11 @@ void playGame(){
     
     detectAlienHits();
     detectPlayerHits();
+    
+    if(scoreBoard.Lives == 0){
+      gameOverTimer = 80;
+      gameMode = 2; 
+    }
     
     drawEnemySquadron();
     drawPlayer();
@@ -149,7 +168,7 @@ void playGame(){
 
 void screenSaver(){
   
-  background(204);
+  background(204); //<>//
   
   if(scoreBoard.X == -1){
     scoreBoard.X = 40;
@@ -168,7 +187,7 @@ void screenSaver(){
     drawPlayer();
     drawBullets();
     drawScoreBoard();
- //<>//
+
     fill(255,255,255);
     drawSprite((width/2)/scale, ((height/2)/scale), startGameMessage, 2);
     pg.endDraw();
@@ -201,8 +220,11 @@ void gameOver(){
   frameThrottle++;
   
   gameOverTimer--;
+  
+  text(""+gameOverTimer, 200,200);
   if(gameOverTimer < 0){
     gameMode = 0; 
+    
   }
 }
 //*************End of screens
