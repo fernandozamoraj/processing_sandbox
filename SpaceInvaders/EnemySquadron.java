@@ -26,7 +26,7 @@ class EnemySquadron{
   public void update(int scale, int maxX, int lowerY, int maxY){
    
     for(EnemyShip sp: sprites){
-      if(sp.hitsWall(scale, maxX))
+      if(sp.isAlive() && sp.hitsWall(scale, maxX))
       {
         bounceBack();
         DownSteps++;

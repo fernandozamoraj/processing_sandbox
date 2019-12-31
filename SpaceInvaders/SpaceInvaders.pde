@@ -116,19 +116,22 @@ void playGame(){
 
     if(frameThrottle % squadronSpeed == 0){
       enemySquadron.update(scale,width,0,height);
-      
-      if(enemySquadron.DownSteps >= 2){
-        squadronSpeed = 20;
-      }
-      else if(enemySquadron.DownSteps >= 4){
-        squadronSpeed = 10;
-      }
-      else if(enemySquadron.DownSteps >= 6){
-        squadronSpeed = 5;
-      }
-      else if(enemySquadron.DownSteps >= 7){
+
+      if(enemySquadron.DownSteps == 7){
         squadronSpeed = 2;
       }
+      else if(enemySquadron.DownSteps == 6){
+        squadronSpeed = 5;
+      }
+      else if(enemySquadron.DownSteps == 4){
+        squadronSpeed = 10;
+      }
+      else if(enemySquadron.DownSteps == 2 ){
+        squadronSpeed = 20;
+      }
+
+
+
     }
     
     if(frameThrottle % 10 == 0){
@@ -141,7 +144,7 @@ void playGame(){
     }
   
     
-    if(frameThrottle % 5 == 0){
+    if(frameThrottle % 3 == 0){
       updateBullets(); 
     }
     
