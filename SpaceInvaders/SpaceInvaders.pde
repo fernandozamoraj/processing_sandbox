@@ -63,6 +63,7 @@ void keyPressed(){
   
   if(gameMode == 0){
     if(key == 's'){
+      enemySquadron = new EnemySquadron(); 
       scoreBoard.Lives = 3;
       scoreBoard.Score =0;
       player.reset();
@@ -129,13 +130,14 @@ void playGame(){
       else if(enemySquadron.DownSteps == 2 ){
         squadronSpeed = 20;
       }
-
-
-
     }
     
     if(frameThrottle % 10 == 0){
       player.update(shipDirection, scale, width);
+      
+    }
+    
+    if(frameThrottle % 20 == 0){
       checkUserInput();
     }
     
@@ -144,12 +146,13 @@ void playGame(){
     }
   
     
-    if(frameThrottle % 3 == 0){
+    if(frameThrottle % 2 == 0){
       updateBullets(); 
     }
     
     detectAlienHits();
     detectPlayerHits();
+    detectAlienPlayerCollision();
     
     if(scoreBoard.Lives == 0){
       gameOverTimer = 80;
@@ -272,6 +275,30 @@ void detectAlienHits(){
          scoreBoard.Score += 100;
       }
     }
+  }
+}
+
+
+void detectAlienPlayerCollision(){
+    EnemyShip[] enemies = enemySquadron.getSprites();
+
+  for(EnemyShip s: enemies){
+      if(!s.isAlive())
+        continue;
+        
+       //System.out.println("Made it here");
+        
+      if(abs(s.X - player.X) < s.Image[0][0].length + player.Image[0][0].length ){
+        if(abs(s.Y - player.Y) < s.Image[0].length + player.Image[0].length ){
+         
+          s.takeHit();
+          player.takeHit();
+          scoreBoard.Lives--;
+          scoreBoard.Score += 100;
+          break;
+        }
+      }
+    
   }
 }
 
