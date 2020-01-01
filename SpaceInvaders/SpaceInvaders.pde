@@ -1,15 +1,30 @@
 import processing.sound.*;
 
 PGraphics pg;
+
+/******************
+
+GAME OBJECTS
+
+********************/
 EnemySquadron enemySquadron;
 PlayerShip player;
 PlayerBullet[] playerBullets;
 EnemyBullet[] enemyBullets;
 Missile[] missiles;
+
+
 int[][] startGameMessage1;
 int[][] startGameMessage2;
 int[][] startGameMessage3;
 int[][] startGameMessage4;
+
+
+/******************
+
+MEDIA RESOURCES
+
+********************/
 
 SoundFile fire;
 SoundFile beat;
@@ -21,6 +36,12 @@ int[][] youWonMessage;
 
 AlienFonts alienFonts;
 
+
+/********************
+
+GAME drawStartScreenText
+
+**********************/
 int frameThrottle = 0;
 int scale = 3;
 char currentKey = ' ';
@@ -36,7 +57,7 @@ int squadronSpeed = 40;
 void setup(){
  size(800,600); 
  pg = createGraphics(width, height);
-
+//Load sounds... requires importing the sound lib in the project
  beat = new SoundFile(this,   "beat.wav");
  fire = new SoundFile(this, "fire.wav");
  playerHit = new SoundFile(this,   "playerhit.wav");
@@ -165,7 +186,7 @@ void playGame(){
       
     }
     
-    if(frameThrottle % 20 == 0){
+    if(frameThrottle % 40 == 0){
       checkUserInput();
     }
     
@@ -185,7 +206,7 @@ void playGame(){
     drawPlayer();
     drawBullets();
     drawEnemyBullets();
-    drawScoreBoard();
+    drawScoreBoard(); //<>//
     pg.endDraw();
       
   }
@@ -319,20 +340,16 @@ void youWon(){
 ***********************************************************/
 
 void checkUserInput(){
-
-  if(frameThrottle % 30 == 0){
-    
-    if(launchBullet){
-      for(PlayerBullet bullet : playerBullets){
-        
-        if(!bullet.isAlive()){
-          bullet.launch(player.X+player.Image[0][0].length/2, player.Y+player.Image[0].length/2);
-          fire.play();
-          break;
-        }
+  if(launchBullet){
+    for(PlayerBullet bullet : playerBullets){
+      
+      if(!bullet.isAlive()){
+        bullet.launch(player.X+player.Image[0][0].length/2, player.Y+player.Image[0].length/2);
+        fire.play();
+        break;
       }
-      launchBullet = false;
     }
+    launchBullet = false;
   }
 }
 
@@ -363,8 +380,6 @@ void detectAlienPlayerCollision(){
   for(EnemyShip s: enemies){
       if(!s.isAlive())
         continue;
-        
-       //System.out.println("Made it here");
         
       if(abs(s.X - player.X) < s.Image[0][0].length + player.Image[0][0].length ){
         if(abs(s.Y - player.Y) < s.Image[0].length + player.Image[0].length ){
@@ -469,10 +484,21 @@ void drawEnemySquadron(){
   EnemyShip first = enemies[0];
   fill(first.R, first.G, first.B);
   stroke(first.R, first.G, first.B);
+  
+  int i =0;
   for(EnemyShip s: enemies){
-    if(!s.isAlive())
+    if(!s.isAlive()){
+      i++; 
       continue;
+    }
+      
+      int row = i/8;
+      switch(row){
+        case 0: case 2: stroke(255,   255,  255); fill(255, 255, 255); break;
+        case 1: case 3: stroke(  80,  255,  80); fill( 80,  255,  80); break;
+      }
       drawSprite(s.X, s.Y, s.Image[s.currentImage]);
+      i++;
   }
 }
 
