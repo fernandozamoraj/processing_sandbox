@@ -1,3 +1,5 @@
+import processing.sound.*;
+
 PGraphics pg;
 EnemySquadron enemySquadron;
 PlayerShip player;
@@ -9,8 +11,14 @@ int[][] startGameMessage2;
 int[][] startGameMessage3;
 int[][] startGameMessage4;
 
+SoundFile fire;
+SoundFile beat;
+SoundFile playerHit;
+SoundFile enemyHit;
 
 int[][] gameOverMessage;
+int[][] youWonMessage;
+
 AlienFonts alienFonts;
 
 int frameThrottle = 0;
@@ -29,6 +37,11 @@ void setup(){
  size(800,600); 
  pg = createGraphics(width, height);
 
+ beat = new SoundFile(this,   "beat.wav");
+ fire = new SoundFile(this, "fire.wav");
+ playerHit = new SoundFile(this,   "playerhit.wav");
+ enemyHit = new SoundFile(this, "enemyhit.wav");
+ 
  enemySquadron = new EnemySquadron(); 
  player = new PlayerShip();
  playerBullets = new PlayerBullet[50];
@@ -48,6 +61,7 @@ void setup(){
  startGameMessage4 = alienFonts.getSprite("s = start game");
  
  gameOverMessage = alienFonts.getSprite("earth has been invaded... game over!!!!");
+ youWonMessage =   alienFonts.getSprite("you won!");
    
  frameThrottle = 0;
  scoreBoard = new ScoreBoard();
@@ -63,9 +77,8 @@ void draw(){
     
     case 0: screenSaver(); break;
     case 1: playGame(); break;
-    case 2: 
-      gameOver();
-      break;
+    case 2: gameOver(); break;
+    case 3: youWon(); break;
   }
 }
 
@@ -131,6 +144,7 @@ void playGame(){
 
     if(frameThrottle % squadronSpeed == 0){
       enemySquadron.update(scale,width,0,height);
+      beat.play();
 
       if(enemySquadron.DownSteps == 9){
         squadronSpeed = 2;
@@ -167,9 +181,6 @@ void playGame(){
     detectAlienHits();
     detectPlayerHits();
     detectAlienPlayerCollision();
-    
-
-    
     drawEnemySquadron();
     drawPlayer();
     drawBullets();
@@ -183,7 +194,12 @@ void playGame(){
       gameOverTimer = 200;
       gameMode = 2;
   }
-    
+  else if(enemySquadron.liveEnemiesCount() < 1){
+       gameOverTimer = 200;
+       gameMode = 3;
+  }
+
+   
   frameThrottle++;
 }
 
@@ -259,6 +275,39 @@ void gameOver(){
     gameMode = 0; 
     
   }
+  
+}
+void youWon(){
+  
+  background(204);
+
+  if(pg != null){
+    
+    pg.beginDraw();
+    pg.clear();
+    
+    fill(0,0,0);
+    stroke(0,0,0);
+    rect(0,0,width,height);
+    
+    noStroke();
+    fill(0,255,0);
+    int x = 5;
+    int y = (height/2)/scale;
+    
+    drawSprite(x, y, youWonMessage, 4);
+    pg.endDraw();
+    
+  }
+
+  frameThrottle++;
+  
+  gameOverTimer--;
+  
+  if(gameOverTimer < 0){
+    gameMode = 0; 
+    
+  }
 }
 //*************End of screens
 
@@ -278,6 +327,7 @@ void checkUserInput(){
         
         if(!bullet.isAlive()){
           bullet.launch(player.X+player.Image[0][0].length/2, player.Y+player.Image[0].length/2);
+          fire.play();
           break;
         }
       }
@@ -300,6 +350,7 @@ void detectAlienHits(){
          pb.killBullet();
          s.takeHit();
          scoreBoard.Score += 100;
+         enemyHit.play();
       }
     }
   }
@@ -322,6 +373,7 @@ void detectAlienPlayerCollision(){
           player.takeHit();
           scoreBoard.Lives--;
           scoreBoard.Score += 100;
+          playerHit.play();
           break;
         }
       }
@@ -340,6 +392,7 @@ void detectPlayerHits(){
        eb.killBullet();
        player.takeHit();
        scoreBoard.Lives--;
+       playerHit.play();
     }
   }
 }

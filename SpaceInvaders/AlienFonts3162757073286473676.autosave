@@ -13,7 +13,7 @@ class AlienFonts{
     }
 
     for(int i=0; i< message.length(); i++){
-      appendToMap(map, i*5, message.charAt(i));  //<>//
+      appendToMap(map, i*5, message.charAt(i)); 
     }
     
     return map;
@@ -24,7 +24,7 @@ class AlienFonts{
     int[][] spriteChar = getChar(ch);
     for(int i=0;i < 5; i++){
        for(int j=0; j < 5; j++){
-         sprite[i][startingPoint+j] = spriteChar[i][j];  //<>//
+         sprite[i][startingPoint+j] = spriteChar[i][j]; 
        }
     }
   }
@@ -177,7 +177,7 @@ class AlienFonts{
        result = new int[][]{
          {0,1,1,0,0},
          {1,0,0,0,0},
-         {1,0,1,1,0},
+         {1,1,1,1,0},
          {1,0,0,1,0},
          {0,1,1,0,0}
        }; break; 
