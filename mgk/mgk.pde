@@ -83,7 +83,7 @@ void draw(){
   drawMachineGun();
   
   for(Bullet b: bullets){
-     if(b.Y < 5 && b.Y > -5 && b.X > 0 && b.X < width){
+     if(b.Y < 10 && b.Y > -10 && b.X > 0 && b.X < width){
         topWall[b.X] = 1; 
      }
   }
@@ -117,7 +117,7 @@ void drawMachineGun(){
 
    if(b.isAlive()){
       fill(255,0,0);
-      ellipse(b.X, b.Y, 20,20);
+      ellipse(b.X, b.Y, 8,8);
       fill(255,255,255);
    }
   }
@@ -133,7 +133,7 @@ void keyPressed(){
 }
 
 void updateMachineGun(){
-  machineGun.update();
+  machineGun.update_v2();
   
   for(Bullet b: bullets){
     b.update(); 
@@ -147,6 +147,9 @@ void updateMachineGun(){
   }
 }
 
+void print2(String s){
+   System.out.println(s); 
+}
 
 
 class Bullet{
@@ -154,6 +157,7 @@ class Bullet{
   public int Y;
   public int DX;
   public int DY;
+  public float angle;
   
   public boolean isAlive(){
     
@@ -174,6 +178,7 @@ class Bullet{
      
      X += DX * 5;
      Y += DY * 5;
+     this.angle = angle;
   }
   
   public void update(){
@@ -236,16 +241,14 @@ class MachineGun{
    this.angle = angle;
   }
   
-  public void update(){
-   
-   if(abs(pmouseX - mouseX) < 1) return;
-   
-   int delta = (int)((machineGun.X-mouseX)*.05);
-   
-   this.angle += delta;
-   if(this.angle > 360) this.angle = 360;
-   if(this.angle < 0) this.angle += 360;
-   if(this.angle < 180) this.angle = 180;
+  public void update_v2(){
+    
+    int distance = (int)((machineGun.X - mouseX)*.5);
+    
+    this.angle = 270+distance;
+    
+    if(this.angle > 360) this.angle -= 360;
+    if(this.angle < 360) this.angle += 360;
   }
   
   public void traverseLeft(){
