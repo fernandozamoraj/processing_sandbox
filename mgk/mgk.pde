@@ -12,6 +12,7 @@ int cycleCounter = 0;
 int MG_FRAME_RATE = 5;
 int[] topWall = null;
 int kills = 0;
+Particles particles;
 
 
 void setup(){
@@ -29,6 +30,8 @@ void setup(){
      enemies[i] = new Enemy(); 
    }
    
+   
+   
    frameRate(30);
 }
 
@@ -44,7 +47,7 @@ void draw(){
   noStroke();
   rect(x,y, 20,40);
   int scale = 4;
-  drawSprite(((width-100)/2)/scale, ((height-40)/2)/scale, startMessage, scale);
+  //awSprite(((width-100)/2)/scale, ((height-40)/2)/scale, startMessage, scale);
   
   for(int i=0; i < width; i++){
     if(topWall[i] == 1) 
@@ -52,14 +55,7 @@ void draw(){
   }
   
   for(Enemy e : enemies){
-    
-      if(e.isAlive())
-        fill(255,255,100);
-      else
-        fill(255,0,0);
-      e.update();
-      ellipse(e.X, e.Y, 40,40);
-      fill(255,255,255);
+    e.show();      
   }
   
   for(Bullet b: bullets){
@@ -72,7 +68,13 @@ void draw(){
           e.kill();
           b.kill();
           kills++;
+          particles = new Particles(e.X, e.Y, 20);
        }
+    }
+    
+    if(particles != null){
+      particles.update();
+      particles.show();
     }
   }
   
@@ -114,13 +116,9 @@ void drawMachineGun(){
   line(machineGun.X, machineGun.Y, machineGun.X, machineGun.Y-90);
   
   for(Bullet b : bullets){
-
-   if(b.isAlive()){
-      fill(255,0,0);
-      ellipse(b.X, b.Y, 8,8);
-      fill(255,255,255);
-   }
+    b.show();   
   }
+  
   translate(machineGun.X, machineGun.Y);
   rotate(radians(machineGun.angle));
   rect(-30,-10,60,20);
@@ -189,6 +187,17 @@ class Bullet{
     Y += DY;
   }
   
+  public void show(){
+   if(isAlive()){
+       noStroke();
+      fill(255,0,0);
+      ellipse(X, Y, 8,8);
+      fill(255,0,0,170);
+      ellipse(X, Y, 20,20);
+      fill(255,255,255);
+   } 
+  }
+  
   public void kill(){
      X = Y = -10; 
   }
@@ -227,6 +236,26 @@ public class Enemy{
    public boolean isAlive(){
      return !Dead;
    }
+   
+   public void show(){
+    if(isAlive())
+     {
+        fill(50,50,0);
+        update();
+        ellipse(X, Y, 70,70);
+        
+        fill(250,250,140);
+        ellipse(X, Y, 65,65);
+        
+        fill(250,250,180);
+        ellipse(X, Y, 50,50);
+        
+        fill(250,250,240);
+        ellipse(X, Y, 20,20);
+        
+        fill(255,255,255);
+     } 
+   }
 }
 
 class MachineGun{
@@ -264,5 +293,96 @@ class MachineGun{
    if(this.angle > 360) this.angle = 360;
    if(this.angle < 0) this.angle += 360;
    if(this.angle < 180) this.angle = 180;
+  }
+}
+
+class Particles{
+ 
+  ArrayList<Particle> particles;
+  int X;
+  int Y;
+  int lifeTime;
+  int size = 20;
+  
+  public Particles(int x, int y, int lifeTime){
+    
+    particles = new ArrayList<Particle>(); 
+    this.X = x;
+    this.Y = y;
+    this.lifeTime = lifeTime;
+    this.size = 20;
+  }
+  
+  public void update(){
+    particles.add(new Particle(this.X, this.Y)); 
+    
+    for(int i = particles.size()-1; i >= 0; i--){
+     
+      if(particles.get(i).isAlive()){
+        particles.get(i).update(); 
+      }
+      else{
+         particles.remove(i); 
+      }      
+    }
+    
+    
+    
+    this.lifeTime--;
+    
+    if(this.lifeTime < 0){
+      particles.clear(); 
+    }
+  }
+  
+  public void show(){
+    for(int i = particles.size()-1; i >= 0; i--){
+     
+      particles.get(i).show();      
+    }
+    
+    if(lifeTime > 0){
+      size *= 1.1;
+      fill(255,255,255,100);
+      ellipse(X,Y,size,size);      
+   }
+  }
+}
+
+class Particle{
+ 
+  public float X;
+  public float Y;
+  public float VX;
+  public float VY;
+  public float alpha;
+  public int size;
+  float gravity = 1.1;
+  
+  public Particle(float x, float y){
+     this.X = x;
+     this.Y = y;
+     this.VX = (random(60)-30)*.1;
+     this.VY = (random(60)-30)*.1;
+     this.size = (int)random(2)*10;
+     this.alpha = 150;
+  }
+  
+  public void show(){
+    noStroke();
+    fill(255, 255, 0,  this.alpha);
+    ellipse(this.X, this.Y, this.size, this.size);
+  }
+  
+  public boolean isAlive(){
+    return this.alpha >= 0; 
+  }
+  
+  public void update(){
+    this.VY -= .03;
+    //this.size++;
+    this.alpha -= 1;
+    this.X += this.VX;
+    this.Y += this.VY;
   }
 }
