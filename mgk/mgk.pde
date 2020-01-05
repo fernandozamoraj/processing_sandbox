@@ -13,6 +13,10 @@ int MG_FRAME_RATE = 5;
 int[] topWall = null;
 int kills = 0;
 Particles particles;
+int machineGunSize = 60;
+int diskSize = 5;
+int bulletSize = 2;
+int enemySize = 10;
 
 
 void setup(){
@@ -58,6 +62,10 @@ void draw(){
     e.show();      
   }
   
+  for(Bullet b : bullets){
+    b.show();   
+  }
+  
   for(Bullet b: bullets){
     if(!b.isAlive()) continue;
     
@@ -82,7 +90,7 @@ void draw(){
   drawSprite(40/4, (height-50)/4, message, 4);
   
   updateMachineGun();
-  drawMachineGun();
+  machineGun.show();
   
   for(Bullet b: bullets){
      if(b.Y < 10 && b.Y > -10 && b.X > 0 && b.X < width){
@@ -108,22 +116,7 @@ void drawSprite(int x, int y, int[][] image, int scale){
   }
 }
 
-void drawMachineGun(){
- 
-  stroke(255);
-  line(machineGun.X, machineGun.Y, machineGun.X-100, machineGun.Y+60);
-  line(machineGun.X, machineGun.Y, machineGun.X+100, machineGun.Y+60);
-  line(machineGun.X, machineGun.Y, machineGun.X, machineGun.Y-90);
-  
-  for(Bullet b : bullets){
-    b.show();   
-  }
-  
-  translate(machineGun.X, machineGun.Y);
-  rotate(radians(machineGun.angle));
-  rect(-30,-10,60,20);
-  rect(-30,-4,140,8);
-}
+
 
 void keyPressed(){
     if(key == 'j') machineGun.traverseLeft();
@@ -190,10 +183,14 @@ class Bullet{
   public void show(){
    if(isAlive()){
        noStroke();
-      fill(255,0,0);
-      ellipse(X, Y, 8,8);
+      fill(255,255,0);
+      ellipse(X+DX, Y+DY, bulletSize,bulletSize);
+      fill(255,255,255);
+      ellipse(X-DX, Y-DY, bulletSize,bulletSize);
+      ellipse(X, Y, bulletSize,bulletSize);
       fill(255,0,0,170);
-      ellipse(X, Y, 20,20);
+      //ellipse(X, Y, bulletSize+5,bulletSize+5);
+      //ellipse(X, Y, bulletSize+5,bulletSize+5);
       fill(255,255,255);
    } 
   }
@@ -242,16 +239,16 @@ public class Enemy{
      {
         fill(50,50,0);
         update();
-        ellipse(X, Y, 70,70);
+        ellipse(X, Y, enemySize+30,enemySize+30);
         
         fill(250,250,140);
-        ellipse(X, Y, 65,65);
+        ellipse(X, Y, enemySize+20,enemySize+20);
         
         fill(250,250,180);
-        ellipse(X, Y, 50,50);
+        ellipse(X, Y, enemySize+10,enemySize+10);
         
         fill(250,250,240);
-        ellipse(X, Y, 20,20);
+        ellipse(X, Y, enemySize,enemySize);
         
         fill(255,255,255);
      } 
@@ -263,11 +260,14 @@ class MachineGun{
   public float angle;
   public int X;
   public int Y;  
+  public int timer;
+  public boolean recoilToggle = false;
   
   public MachineGun(int x, int y, float angle){
    this.X = x;
    this.Y = y;
    this.angle = angle;
+   this.timer = 0;
   }
   
   public void update_v2(){
@@ -293,6 +293,34 @@ class MachineGun{
    if(this.angle > 360) this.angle = 360;
    if(this.angle < 0) this.angle += 360;
    if(this.angle < 180) this.angle = 180;
+  }
+  
+  void show(){
+ 
+    this.timer++;
+    stroke(255);
+    line(X, Y, X-50, Y+30);
+    line(X, Y, X+50, Y+30);
+    line(X, Y, X, Y-45);
+
+    if(timer%2==0){
+      recoilToggle = !recoilToggle;
+    }
+    
+    int recoildDist = recoilToggle ? 6 : 0;
+    
+    if(timer > 5000)
+      timer = 0;
+    
+    translate(X, Y);
+    rotate(radians(angle));
+    rect(-((machineGunSize/4)+recoildDist),-(machineGunSize/12),machineGunSize/2,machineGunSize/6);
+    rect(-((machineGunSize/4)+recoildDist),-(machineGunSize/10),machineGunSize/3*2,machineGunSize/5);
+    rect(-((machineGunSize/4)+recoildDist),-(machineGunSize/32),machineGunSize*1.5,machineGunSize/16);
+    rect( ((machineGunSize*1.2)-recoildDist),-(machineGunSize/18),machineGunSize/5,machineGunSize/9);
+    
+    ellipse(-(((machineGunSize/4)+5)+recoildDist), -((machineGunSize/16)+5), machineGunSize/16, machineGunSize/16);
+    ellipse(-(((machineGunSize/4)+5)+recoildDist), -((machineGunSize/16)-12), machineGunSize/16, machineGunSize/16);
   }
 }
 
