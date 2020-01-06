@@ -19,6 +19,7 @@ int machineGunSize = 60;
 int diskSize = 5;
 int bulletSize = 2;
 int enemySize = 10;
+int flashTimer = 0;
 
 
 void setup(){
@@ -69,6 +70,12 @@ void draw(){
   for(Bullet b : bullets){
     b.show();   
   }
+  
+  if(flashTimer > 0){
+    fill(255,255,255,flashTimer*30);  
+    rect(0,0,width,height);
+  }
+  
   if(cycleCounter%11 ==0)
     fire.play();
   if(cycleCounter%90 ==0)
@@ -86,6 +93,7 @@ void draw(){
           kills++;
           particles = new Particles(e.X, e.Y, 20);
           bulletExplosion.play();
+          flashTimer = 5;
        }
     }
     
@@ -93,6 +101,8 @@ void draw(){
       particles.update();
       particles.show();
     }
+    
+    flashTimer--;
   }
   
   int[][] message = fonts.getSprite("kills: " + kills);
@@ -185,11 +195,11 @@ class Bullet{
   public void launch(int x, int y, float angle){
      X = x;
      Y = y;
-     DX = (int)(cos(radians(angle))*20);
-     DY = (int)(sin(radians(angle))*20);
+     DX = (int)(cos(radians(angle))*80);
+     DY = (int)(sin(radians(angle))*80);
      
-     X += DX * 5;
-     Y += DY * 5;
+     X += DX*2;
+     Y += DY*2;
      this.angle = angle;
   }
   
@@ -205,13 +215,23 @@ class Bullet{
    if(isAlive()){
        noStroke();
       fill(255,255,0);
-      ellipse(X+DX, Y+DY, bulletSize,bulletSize);
-      fill(255,255,255);
-      ellipse(X-DX, Y-DY, bulletSize,bulletSize);
-      ellipse(X, Y, bulletSize,bulletSize);
-      fill(255,0,0,170);
-      //ellipse(X, Y, bulletSize+5,bulletSize+5);
-      //ellipse(X, Y, bulletSize+5,bulletSize+5);
+      int x = X;
+      int y = Y;
+      float bsize = 20 - (dist(machineGun.X, machineGun.Y, X, Y)/20);
+      for(int i=0; i < 50; i++)
+      {
+        bsize *= .95;
+        if(bsize < .1)
+          bsize = .1;
+          
+        fill(255,255,255);
+        ellipse(x, y, bulletSize*bsize,bulletSize*bsize);
+        fill(230,170,60, 200);
+        ellipse(x, y, bulletSize*(bsize),bulletSize*(bsize));
+        
+        x+=DX/16;
+        y+=DY/16;
+      }
       fill(255,255,255);
    } 
   }
