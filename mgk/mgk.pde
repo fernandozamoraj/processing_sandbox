@@ -1,8 +1,10 @@
-
+import processing.sound.*;
 
 int x=0;
 int y=0;
 
+SoundFile fire;
+SoundFile bulletExplosion;
 AlienFonts fonts;
 int[][] startMessage;
 MachineGun machineGun;
@@ -22,6 +24,8 @@ int enemySize = 10;
 void setup(){
    size(1000, 700);
    fonts = new AlienFonts();
+   fire = new SoundFile(this, "mgfire02.wav");
+   bulletExplosion = new SoundFile(this, "bulletExplosion.wav");
    startMessage = fonts.getSprite("welcome to mgk!");
    machineGun = new MachineGun(width/2, height-200, 270);
    bullets = new Bullet[100];
@@ -65,6 +69,10 @@ void draw(){
   for(Bullet b : bullets){
     b.show();   
   }
+  if(cycleCounter%11 ==0)
+    fire.play();
+  if(cycleCounter%90 ==0)
+    fire = new SoundFile(this, "mgfire02.wav");
   
   for(Bullet b: bullets){
     if(!b.isAlive()) continue;
@@ -77,6 +85,7 @@ void draw(){
           b.kill();
           kills++;
           particles = new Particles(e.X, e.Y, 20);
+          bulletExplosion.play();
        }
     }
     
@@ -87,7 +96,7 @@ void draw(){
   }
   
   int[][] message = fonts.getSprite("kills: " + kills);
-  drawSprite(40/4, (height-50)/4, message, 4);
+  drawFontSprite(40/4, (height-50)/4, message, 4);
   
   updateMachineGun();
   machineGun.show();
@@ -102,6 +111,18 @@ void draw(){
   
   if(cycleCounter > 10000)
     cycleCounter = 0;
+}
+
+void drawFontSprite(int x, int y, int[][] image, int scale){
+  for(int i=0;i<image.length; i++){
+    for(int j=0; j<image[i].length; j++){
+      if(image[i][j] == 1){
+        int newX = x*scale+j*scale+3*scale;
+        int newY = y*scale+i*scale+3*scale;
+        rect(newX, newY, scale,scale*1.5);
+      }
+    }
+  }
 }
 
 void drawSprite(int x, int y, int[][] image, int scale){
