@@ -9,7 +9,7 @@ AlienFonts fonts;
 int[][] startMessage;
 MachineGun machineGun;
 Bullet[]   bullets;
-Enemy[] enemies;
+Target[] targets;
 int cycleCounter = 0;
 int MG_FRAME_RATE = 5;
 int[] topWall = null;
@@ -18,7 +18,7 @@ Particles particles;
 int machineGunSize = 60;
 int diskSize = 5;
 int bulletSize = 2;
-int enemySize = 10;
+int enemySize = 30;
 int flashTimer = 0;
 
 
@@ -34,9 +34,13 @@ void setup(){
      bullets[i] = new Bullet(); 
    }
    
-   enemies = new Enemy[30];
-   for(int i=0; i < enemies.length; i++){
-     enemies[i] = new Enemy(); 
+   targets = new Target[30];
+   for(int i=0; i < targets.length; i++){
+     targets[i] = new Target(); 
+     int temp = (int)random(5);
+     if(temp == 0){
+        targets[i].Friendly = true; 
+     }
    }
    
    
@@ -63,8 +67,8 @@ void draw(){
       ellipse(i, 5, 10,10); 
   }
   
-  for(Enemy e : enemies){
-    e.show();      
+  for(Target t : targets){
+    t.show();      
   }
   
   for(Bullet b : bullets){
@@ -84,14 +88,14 @@ void draw(){
   for(Bullet b: bullets){
     if(!b.isAlive()) continue;
     
-    for(Enemy e: enemies){
-      if(!e.isAlive()) continue;
+    for(Target t: targets){
+      if(!t.isAlive()) continue;
       
-      if(dist(e.X, e.Y, b.X, b.Y) < 50){
-          e.kill();
+      if(dist(t.X, t.Y, b.X, b.Y) < 50){
+          t.kill();
           b.kill();
           kills++;
-          particles = new Particles(e.X, e.Y, 20);
+          particles = new Particles(t.X, t.Y, 20);
           bulletExplosion.play();
           flashTimer = 5;
        }
@@ -241,13 +245,14 @@ class Bullet{
   }
 }
 
-public class Enemy{
+public class Target{
  
    public int X = -100;
    public int Y = -100;
    public int DX;
    public int DY;
-   private boolean Dead = false;
+   protected boolean Dead = false;
+   public boolean Friendly = false;
    
    public void update(){
      if(Dead) return;
@@ -276,19 +281,16 @@ public class Enemy{
    }
    
    public void show(){
+     
+     
     if(isAlive())
      {
+        int tempColor = this.Friendly ? color(100,100,200) : color(255,255,0);
+        
         fill(50,50,0);
         update();
-        ellipse(X, Y, enemySize+30,enemySize+30);
         
-        fill(250,250,140);
-        ellipse(X, Y, enemySize+20,enemySize+20);
-        
-        fill(250,250,180);
-        ellipse(X, Y, enemySize+10,enemySize+10);
-        
-        fill(250,250,240);
+        fill(tempColor);
         ellipse(X, Y, enemySize,enemySize);
         
         fill(255,255,255);
@@ -380,10 +382,14 @@ class Particles{
     this.Y = y;
     this.lifeTime = lifeTime;
     this.size = 20;
+    int count = (int)random(10)+10;
+    for(int i=0;i<count;i++){
+      particles.add(new Particle(X,Y)); 
+    }
   }
   
   public void update(){
-    particles.add(new Particle(this.X, this.Y)); 
+    //particles.add(new Particle(this.X, this.Y)); 
     
     for(int i = particles.size()-1; i >= 0; i--){
      
@@ -431,9 +437,9 @@ class Particle{
   public Particle(float x, float y){
      this.X = x;
      this.Y = y;
-     this.VX = (random(60)-30)*.1;
-     this.VY = (random(60)-30)*.1;
-     this.size = (int)random(2)*10;
+     this.VX = (random(60)-30)*2;
+     this.VY = (random(60)-30)*2;
+     this.size = (int)random(5)*4;
      this.alpha = 150;
   }
   
@@ -448,9 +454,9 @@ class Particle{
   }
   
   public void update(){
-    this.VY -= .03;
+    //this.VY -= .03;
     //this.size++;
-    this.alpha -= 1;
+    this.alpha *= .95;
     this.X += this.VX;
     this.Y += this.VY;
   }
