@@ -3,26 +3,33 @@ import processing.sound.*;
 int x=0;
 int y=0;
 
+//Media objects
 SoundFile fire;
 SoundFile bulletExplosion;
 AlienFonts fonts;
 int[][] startMessage;
+
+//Visual objects
 MachineGun machineGun;
 Bullet[]   bullets;
 Target[] targets;
-int cycleCounter = 0;
-int MG_FRAME_RATE = 5;
-int[] topWall = null;
-int kills = 0;
 Particles particles;
+int[] topWall = null;
+
+//Game state
+int MG_FRAME_RATE = 5;
+int cycleCounter = 0;
+int kills = 0;
+boolean fireButtonDown = false;
+
+//Game settings
 int machineGunSize = 60;
 int diskSize = 5;
 int bulletSize = 2;
 int enemySize = 30;
 int flashTimer = 0;
-boolean fireButtonDown = false;
 
-
+//API functions
 void setup(){
    size(1000, 700);
    fonts = new AlienFonts();
@@ -43,8 +50,6 @@ void setup(){
         targets[i].Friendly = true; 
      }
    }
-   
-   
    
    frameRate(30);
 }
@@ -125,7 +130,7 @@ void draw(){
   machineGun.show();
   
   for(Bullet b: bullets){
-     if(b.Y < 10 && b.Y > -10 && b.X > 0 && b.X < width){
+     if(b.Y < 80 && b.Y > -80 && b.X > 0 && b.X < width){
         topWall[b.X] = 1; 
      }
   }
