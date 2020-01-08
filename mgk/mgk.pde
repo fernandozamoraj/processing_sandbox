@@ -20,6 +20,7 @@ int diskSize = 5;
 int bulletSize = 2;
 int enemySize = 30;
 int flashTimer = 0;
+boolean fireButtonDown = false;
 
 
 void setup(){
@@ -48,6 +49,14 @@ void setup(){
    frameRate(30);
 }
 
+void mousePressed(){
+  fireButtonDown = true;
+  fire.play();
+}
+
+void mouseReleased(){
+  fireButtonDown = false;
+}
 
 void draw(){
   
@@ -80,7 +89,7 @@ void draw(){
     rect(0,0,width,height);
   }
   
-  if(cycleCounter%11 ==0)
+  if(cycleCounter%11 ==0 && fireButtonDown)
     fire.play();
   if(cycleCounter%90 ==0)
     fire = new SoundFile(this, "mgfire02.wav");
@@ -151,8 +160,6 @@ void drawSprite(int x, int y, int[][] image, int scale){
   }
 }
 
-
-
 void keyPressed(){
     if(key == 'j') machineGun.traverseLeft();
     if(key == 'k') machineGun.traverseRight();
@@ -165,18 +172,18 @@ void updateMachineGun(){
     b.update(); 
   }
   
-  for(Bullet b: bullets){
-     if(!b.isAlive() && cycleCounter % MG_FRAME_RATE == 0){
-       b.launch(machineGun.X, machineGun.Y, machineGun.angle);
-       break;
-     }
-  }
+  if(fireButtonDown)
+    for(Bullet b: bullets){
+       if(!b.isAlive() && cycleCounter % MG_FRAME_RATE == 0){
+         b.launch(machineGun.X, machineGun.Y, machineGun.angle);
+         break;
+       }
+    }
 }
 
 void print2(String s){
    System.out.println(s); 
 }
-
 
 class Bullet{
   public int X;
@@ -350,20 +357,23 @@ class MachineGun{
       recoilToggle = !recoilToggle;
     }
     
-    int recoildDist = recoilToggle ? 6 : 0;
+    int recoilDist = recoilToggle ? 6 : 0;
+    
+    if(!fireButtonDown)
+      recoilDist = 0;
     
     if(timer > 5000)
       timer = 0;
     
     translate(X, Y);
     rotate(radians(angle));
-    rect(-((machineGunSize/4)+recoildDist),-(machineGunSize/12),machineGunSize/2,machineGunSize/6);
-    rect(-((machineGunSize/4)+recoildDist),-(machineGunSize/10),machineGunSize/3*2,machineGunSize/5);
-    rect(-((machineGunSize/4)+recoildDist),-(machineGunSize/32),machineGunSize*1.5,machineGunSize/16);
-    rect( ((machineGunSize*1.2)-recoildDist),-(machineGunSize/18),machineGunSize/5,machineGunSize/9);
+    rect(-((machineGunSize/4)+recoilDist),-(machineGunSize/12),machineGunSize/2,machineGunSize/6);
+    rect(-((machineGunSize/4)+recoilDist),-(machineGunSize/10),machineGunSize/3*2,machineGunSize/5);
+    rect(-((machineGunSize/4)+recoilDist),-(machineGunSize/32),machineGunSize*1.5,machineGunSize/16);
+    rect( ((machineGunSize*1.2)-recoilDist),-(machineGunSize/18),machineGunSize/5,machineGunSize/9);
     
-    ellipse(-(((machineGunSize/4)+5)+recoildDist), -((machineGunSize/16)+5), machineGunSize/16, machineGunSize/16);
-    ellipse(-(((machineGunSize/4)+5)+recoildDist), -((machineGunSize/16)-12), machineGunSize/16, machineGunSize/16);
+    ellipse(-(((machineGunSize/4)+5)+recoilDist), -((machineGunSize/16)+5), machineGunSize/16, machineGunSize/16);
+    ellipse(-(((machineGunSize/4)+5)+recoilDist), -((machineGunSize/16)-12), machineGunSize/16, machineGunSize/16);
   }
 }
 
@@ -400,8 +410,6 @@ class Particles{
          particles.remove(i); 
       }      
     }
-    
-    
     
     this.lifeTime--;
     
