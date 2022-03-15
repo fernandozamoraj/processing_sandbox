@@ -30,7 +30,6 @@ class EnemyShip extends Sprite{
        {0,0,1,0,0,0,0,0,1,0,0},
        {0,1,1,0,0,0,0,0,1,1,0}
       }
-      
     };
      setImage(image); 
      DX = 6;
@@ -65,6 +64,7 @@ class EnemyShip extends Sprite{
     if(health < 1)
       return;
       
+    //should this be health -= 1; instead????
     health = 1;
     
     if(health == 2){
